@@ -3,6 +3,8 @@
 // Copyright (c) 2012-2022 Leopotam <leopotam@yandex.ru>
 // ----------------------------------------------------------------------------
 
+#define LEOECSLITE_FILTER_EVENTS
+
 using System;
 using System.Runtime.CompilerServices;
 
@@ -10,12 +12,8 @@ using System.Runtime.CompilerServices;
 using Unity.IL2CPP.CompilerServices;
 #endif
 
-namespace Leopotam.EcsLite {
+namespace Modules.EcsLite {
 #if LEOECSLITE_FILTER_EVENTS
-    public interface IEcsFilterEventListener {
-        void OnEntityAdded (int entity);
-        void OnEntityRemoved (int entity);
-    }
 #endif
 #if ENABLE_IL2CPP
     [Il2CppSetOption (Option.NullChecks, false)]

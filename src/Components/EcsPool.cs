@@ -10,22 +10,7 @@ using System.Runtime.CompilerServices;
 using Unity.IL2CPP.CompilerServices;
 #endif
 
-namespace Leopotam.EcsLite {
-    public interface IEcsPool {
-        void Resize (int capacity);
-        bool Has (int entity);
-        void Del (int entity);
-        void AddRaw (int entity, object dataRaw);
-        object GetRaw (int entity);
-        void SetRaw (int entity, object dataRaw);
-        int GetId ();
-        Type GetComponentType ();
-    }
-
-    public interface IEcsAutoReset<T> where T : struct {
-        void AutoReset (ref T c);
-    }
-
+namespace Modules.EcsLite {
 #if ENABLE_IL2CPP
     [Il2CppSetOption (Option.NullChecks, false)]
     [Il2CppSetOption (Option.ArrayBoundsChecks, false)]

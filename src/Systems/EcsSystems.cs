@@ -9,41 +9,7 @@ using System.Collections.Generic;
 using Unity.IL2CPP.CompilerServices;
 #endif
 
-namespace Leopotam.EcsLite {
-    public interface IEcsSystem { }
-
-    public interface IEcsPreInitSystem : IEcsSystem {
-        void PreInit (IEcsSystems systems);
-    }
-
-    public interface IEcsInitSystem : IEcsSystem {
-        void Init (IEcsSystems systems);
-    }
-
-    public interface IEcsRunSystem : IEcsSystem {
-        void Run (IEcsSystems systems);
-    }
-
-    public interface IEcsDestroySystem : IEcsSystem {
-        void Destroy (IEcsSystems systems);
-    }
-
-    public interface IEcsPostDestroySystem : IEcsSystem {
-        void PostDestroy (IEcsSystems systems);
-    }
-
-    public interface IEcsSystems {
-        T GetShared<T> () where T : class;
-        IEcsSystems AddWorld (EcsWorld world, string name);
-        EcsWorld GetWorld (string name = null);
-        IReadOnlyDictionary<string, EcsWorld> GetAllNamedWorlds ();
-        IEcsSystems Add (IEcsSystem system);
-        IReadOnlyList<IEcsSystem> GetAllSystems ();
-        void Init ();
-        void Run ();
-        void Destroy ();
-    }
-
+namespace Modules.EcsLite {
 #if ENABLE_IL2CPP
     [Il2CppSetOption (Option.NullChecks, false)]
     [Il2CppSetOption (Option.ArrayBoundsChecks, false)]
