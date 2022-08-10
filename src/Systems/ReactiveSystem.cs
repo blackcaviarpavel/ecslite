@@ -5,30 +5,16 @@ using System.Collections.Generic;
 namespace Submodules.EcsLite
 {
 #if LEOECSLITE_FILTER_EVENTS
-	public abstract class ReactiveSystem : IEcsRunSystem, IEcsFilterEventListener
+	public abstract class ReactiveSystem : IEcsRunSystem, IEcsFilterEventListener, IEcsInitSystem, IEcsDestroySystem
 	{
 		private readonly List<EcsFilterMonitor> _listeningFilters = new(4);
 		private readonly List<int> _entities = new();
 		private MonitoringType _monitoringType = MonitoringType.Unknown;
 		private bool _isActive;
-		
-		public void Activate()
+
+		public void Init(IEcsSystems systems)
 		{
-			if (_isActive)
-			{
-				return;
-			}
-
-			_isActive = true;
-			_listeningFilters.Clear();
-			_listeningFilters.AddRange(Subscribe());
-
-			foreach (var monitor in _listeningFilters)
-			{
-				UpdateMonitoringType(monitor);
-
-				monitor.Filter.AddEventListener(this);
-			}
+			Activate();
 		}
 		
 		public void OnEntityAdded(int entity)
@@ -58,20 +44,10 @@ namespace Submodules.EcsLite
 			
 			_entities.Clear();
 		}
-		
-		public void Deactivate()
-		{
-			if (!_isActive)
-			{
-				return;
-			}
 
-			_isActive = false;
-			
-			foreach (var monitor in _listeningFilters)
-			{
-				monitor.Filter.RemoveEventListener(this);
-			}
+		public void Destroy(IEcsSystems systems)
+		{
+			Deactivate();
 		}
 
 		protected abstract IEnumerable<EcsFilterMonitor> Subscribe();
@@ -87,6 +63,40 @@ namespace Submodules.EcsLite
 			else if (_monitoringType != filterMonitor.MonitoringType)
 			{
 				_monitoringType = MonitoringType.AddedOrRemoved;
+			}
+		}
+		
+		private void Activate()
+		{
+			if (_isActive)
+			{
+				return;
+			}
+
+			_isActive = true;
+			_listeningFilters.Clear();
+			_listeningFilters.AddRange(Subscribe());
+
+			foreach (var monitor in _listeningFilters)
+			{
+				UpdateMonitoringType(monitor);
+
+				monitor.Filter.AddEventListener(this);
+			}
+		}
+		
+		private void Deactivate()
+		{
+			if (!_isActive)
+			{
+				return;
+			}
+
+			_isActive = false;
+			
+			foreach (var monitor in _listeningFilters)
+			{
+				monitor.Filter.RemoveEventListener(this);
 			}
 		}
 	}
