@@ -1,4 +1,7 @@
 ﻿namespace Submodules.EcsLite
 {
-	public interface IEcsSystem { }
+	public class EcsRoot
+	{
+		
+	}
 }

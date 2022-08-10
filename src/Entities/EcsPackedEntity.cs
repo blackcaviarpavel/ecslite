@@ -7,7 +7,7 @@
 using Unity.IL2CPP.CompilerServices;
 #endif
 
-namespace Modules.EcsLite {
+namespace Submodules.EcsLite {
     public struct EcsPackedEntity {
         internal int Id;
         internal int Gen;

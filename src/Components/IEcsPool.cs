@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Modules.EcsLite
+namespace Submodules.EcsLite
 {
 	public interface IEcsPool {
 		void Resize (int capacity);

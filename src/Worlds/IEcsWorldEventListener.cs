@@ -1,4 +1,4 @@
-﻿namespace Modules.EcsLite
+﻿namespace Submodules.EcsLite
 {
 #if DEBUG || LEOECSLITE_WORLD_EVENTS
 	public interface IEcsWorldEventListener {

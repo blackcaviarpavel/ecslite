@@ -12,7 +12,7 @@ using System.Runtime.CompilerServices;
 using Unity.IL2CPP.CompilerServices;
 #endif
 
-namespace Modules.EcsLite {
+namespace Submodules.EcsLite {
 #if LEOECSLITE_FILTER_EVENTS
 #endif
 #if ENABLE_IL2CPP

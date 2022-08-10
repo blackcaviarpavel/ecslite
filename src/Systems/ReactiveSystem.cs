@@ -2,7 +2,7 @@
 
 using System.Collections.Generic;
 
-namespace Modules.EcsLite
+namespace Submodules.EcsLite
 {
 #if LEOECSLITE_FILTER_EVENTS
 	public abstract class ReactiveSystem : IEcsRunSystem, IEcsFilterEventListener

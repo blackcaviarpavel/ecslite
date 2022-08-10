@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace Modules.EcsLite
+namespace Submodules.EcsLite
 {
 	public static class EcsEntityExtensions {
 		[MethodImpl (MethodImplOptions.AggressiveInlining)]

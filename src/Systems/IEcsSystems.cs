@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Modules.EcsLite
+namespace Submodules.EcsLite
 {
 	public interface IEcsSystems {
 		T GetShared<T> () where T : class;

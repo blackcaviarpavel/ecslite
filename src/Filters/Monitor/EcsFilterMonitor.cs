@@ -1,4 +1,4 @@
-﻿namespace Modules.EcsLite
+﻿namespace Submodules.EcsLite
 {
 	public struct EcsFilterMonitor
 	{
