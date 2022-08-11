@@ -45,17 +45,12 @@ namespace Submodules.EcsLite {
         }
 
         [MethodImpl (MethodImplOptions.AggressiveInlining)]
-        public EcsWorld GetWorld () {
-            return _world;
-        }
-
-        [MethodImpl (MethodImplOptions.AggressiveInlining)]
         public int GetEntitiesCount () {
             return _entitiesCount;
         }
 
         [MethodImpl (MethodImplOptions.AggressiveInlining)]
-        public int[] GetRawEntities () {
+        public int[] GetEntities () {
             return _denseEntities;
         }
 
