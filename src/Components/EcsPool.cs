@@ -157,6 +157,29 @@ namespace Submodules.EcsLite {
         }
 
         [MethodImpl (MethodImplOptions.AggressiveInlining)]
+        public ref T Set (int entity)
+        {
+#if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
+            if (!_world.IsEntityAliveInternal (entity)) { throw new Exception ("Cant touch destroyed entity."); }
+#endif
+            if (_sparseItems[entity] == 0) {
+                return ref Add(entity);
+            }
+            
+            return ref Get(entity);
+        }
+        
+        [MethodImpl (MethodImplOptions.AggressiveInlining)]
+        public ref T Change (int entity)
+        {
+#if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
+            if (!_world.IsEntityAliveInternal (entity)) { throw new Exception ("Cant touch destroyed entity."); }
+#endif
+            Del(entity);
+            return ref Add(entity);
+        }
+
+        [MethodImpl (MethodImplOptions.AggressiveInlining)]
         public ref T Get (int entity) {
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
             if (!_world.IsEntityAliveInternal (entity)) { throw new Exception ("Cant touch destroyed entity."); }
