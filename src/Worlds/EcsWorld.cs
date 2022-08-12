@@ -17,6 +17,8 @@ namespace Submodules.EcsLite {
     [Il2CppSetOption (Option.ArrayBoundsChecks, false)]
 #endif
     public class EcsWorld {
+        public const int NullEntityIndex = -1;
+        
         internal EntityData[] Entities;
         int _entitiesCount;
         int[] _recycledEntities;
@@ -112,7 +114,7 @@ namespace Submodules.EcsLite {
             for (var i = _entitiesCount - 1; i >= 0; i--) {
                 ref var entityData = ref Entities[i];
                 if (entityData.ComponentsCount > 0) {
-                    DelEntity (i);
+                    DestroyEntity (i);
                 }
             }
             _pools = Array.Empty<IEcsPool> ();
@@ -171,7 +173,7 @@ namespace Submodules.EcsLite {
             return entity;
         }
 
-        public void DelEntity (int entity) {
+        public void DestroyEntity (int entity) {
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
             if (entity < 0 || entity >= _entitiesCount) { throw new Exception ("Cant touch destroyed entity."); }
 #endif
@@ -185,7 +187,7 @@ namespace Submodules.EcsLite {
                 while (entityData.ComponentsCount > 0 && idx < _poolsCount) {
                     for (; idx < _poolsCount; idx++) {
                         if (_pools[idx].Has (entity)) {
-                            _pools[idx++].Del (entity);
+                            _pools[idx++].Remove (entity);
                             break;
                         }
                     }

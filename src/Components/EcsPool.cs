@@ -175,7 +175,7 @@ namespace Submodules.EcsLite {
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
             if (!_world.IsEntityAliveInternal (entity)) { throw new Exception ("Cant touch destroyed entity."); }
 #endif
-            Del(entity);
+            Remove(entity);
             return ref Add(entity);
         }
 
@@ -196,7 +196,7 @@ namespace Submodules.EcsLite {
             return _sparseItems[entity] > 0;
         }
 
-        public void Del (int entity) {
+        public void Remove (int entity) {
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
             if (!_world.IsEntityAliveInternal (entity)) { throw new Exception ("Cant touch destroyed entity."); }
 #endif
@@ -219,7 +219,7 @@ namespace Submodules.EcsLite {
                 _world.RaiseEntityChangeEvent (entity);
 #endif
                 if (entityData.ComponentsCount == 0) {
-                    _world.DelEntity (entity);
+                    _world.DestroyEntity (entity);
                 }
             }
         }
