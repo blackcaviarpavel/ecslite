@@ -18,7 +18,7 @@ namespace Submodules.EcsLite {
         readonly EcsWorld _defaultWorld;
         readonly Dictionary<string, EcsWorld> _worlds;
         readonly List<IEcsSystem> _allSystems;
-        readonly List<IEcsRunSystem> _runSystems;
+        readonly List<IEcsExecuteSystem> _runSystems;
         readonly object _shared;
 #if DEBUG
         bool _inited;
@@ -29,7 +29,7 @@ namespace Submodules.EcsLite {
             _shared = shared;
             _worlds = new Dictionary<string, EcsWorld> (8);
             _allSystems = new List<IEcsSystem> (128);
-            _runSystems = new List<IEcsRunSystem> (128);
+            _runSystems = new List<IEcsExecuteSystem> (128);
         }
 
         public virtual T GetShared<T> () where T : class {
@@ -64,7 +64,7 @@ namespace Submodules.EcsLite {
             if (_inited) { throw new System.Exception ("Cant add system after initialization."); }
 #endif
             _allSystems.Add (system);
-            if (system is IEcsRunSystem runSystem) {
+            if (system is IEcsExecuteSystem runSystem) {
                 _runSystems.Add (runSystem);
             }
             return this;
@@ -80,7 +80,7 @@ namespace Submodules.EcsLite {
 #endif
             foreach (var system in _allSystems) {
                 if (system is IEcsPreInitSystem initSystem) {
-                    initSystem.PreInit (this);
+                    initSystem.PreInit ();
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
                     var worldName = CheckForLeakedEntities (this);
                     if (worldName != null) { throw new System.Exception ($"Empty entity detected in world \"{worldName}\" after {initSystem.GetType ().Name}.PreInit()."); }
@@ -88,8 +88,8 @@ namespace Submodules.EcsLite {
                 }
             }
             foreach (var system in _allSystems) {
-                if (system is IEcsInitSystem initSystem) {
-                    initSystem.Init (this);
+                if (system is IEcsInitializeSystem initSystem) {
+                    initSystem.Initialize ();
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
                     var worldName = CheckForLeakedEntities (this);
                     if (worldName != null) { throw new System.Exception ($"Empty entity detected in world \"{worldName}\" after {initSystem.GetType ().Name}.Init()."); }
@@ -106,7 +106,7 @@ namespace Submodules.EcsLite {
             if (!_inited) { throw new System.Exception ("Cant run without initialization."); }
 #endif
             for (int i = 0, iMax = _runSystems.Count; i < iMax; i++) {
-                _runSystems[i].Run (this);
+                _runSystems[i].Execute ();
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
                 var worldName = CheckForLeakedEntities (this);
                 if (worldName != null) { throw new System.Exception ($"Empty entity detected in world \"{worldName}\" after {_runSystems[i].GetType ().Name}.Run()."); }
@@ -117,7 +117,7 @@ namespace Submodules.EcsLite {
         public virtual void Destroy () {
             for (var i = _allSystems.Count - 1; i >= 0; i--) {
                 if (_allSystems[i] is IEcsDestroySystem destroySystem) {
-                    destroySystem.Destroy (this);
+                    destroySystem.Destroy ();
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
                     var worldName = CheckForLeakedEntities (this);
                     if (worldName != null) { throw new System.Exception ($"Empty entity detected in world \"{worldName}\" after {destroySystem.GetType ().Name}.Destroy()."); }
@@ -126,7 +126,7 @@ namespace Submodules.EcsLite {
             }
             for (var i = _allSystems.Count - 1; i >= 0; i--) {
                 if (_allSystems[i] is IEcsPostDestroySystem postDestroySystem) {
-                    postDestroySystem.PostDestroy (this);
+                    postDestroySystem.PostDestroy ();
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
                     var worldName = CheckForLeakedEntities (this);
                     if (worldName != null) { throw new System.Exception ($"Empty entity detected in world \"{worldName}\" after {postDestroySystem.GetType ().Name}.PostDestroy()."); }

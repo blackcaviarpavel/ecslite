@@ -5,16 +5,18 @@ using System.Collections.Generic;
 namespace Submodules.EcsLite
 {
 #if LEOECSLITE_FILTER_EVENTS
-	public abstract class ReactiveSystem : IEcsRunSystem, IEcsFilterEventListener, IEcsInitSystem, IEcsDestroySystem
+	public abstract class ReactiveSystem : IEcsExecuteSystem, IEcsInitializeSystem, IEcsDestroySystem, IEcsFilterEventListener
 	{
 		private readonly List<EcsFilterMonitor> _listeningFilters = new(4);
 		private readonly List<int> _entities = new();
 		private MonitoringType _monitoringType = MonitoringType.Unknown;
 		private bool _isActive;
 
-		public void Init(IEcsSystems systems)
+		public void Initialize()
 		{
 			Activate();
+
+			OnInitialize();
 		}
 		
 		public void OnEntityAdded(int entity)
@@ -33,7 +35,7 @@ namespace Submodules.EcsLite
 			}
 		}
 
-		public void Run(IEcsSystems systems)
+		public void Execute()
 		{
 			if (_entities.Count == 0)
 			{
@@ -45,14 +47,20 @@ namespace Submodules.EcsLite
 			_entities.Clear();
 		}
 
-		public void Destroy(IEcsSystems systems)
+		public void Destroy()
 		{
 			Deactivate();
+			
+			OnDestroy();
 		}
+
+		protected virtual void OnInitialize() { }
+		
+		protected virtual void OnDestroy() { }
 
 		protected abstract IEnumerable<EcsFilterMonitor> Subscribe();
 
-		protected abstract void Process(List<int> entities);
+		protected abstract void Process(IEnumerable<int> entities);
 
 		private void UpdateMonitoringType(EcsFilterMonitor filterMonitor)
 		{
