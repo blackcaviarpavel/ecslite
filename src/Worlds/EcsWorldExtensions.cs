@@ -18,5 +18,19 @@ namespace Submodules.EcsLite
 
 			throw new Exception($"Cannot get the single entity from type {typeof(T)}. Group contains {filter.GetEntitiesCount()} entities. ");
 		}
+
+		public static int SetSingleEntity<T>(this EcsWorld ecsWorld) where T : struct
+		{
+			var entity = GetSingleEntity<T>(ecsWorld);
+			if (entity == EcsWorld.NullEntityIndex)
+			{
+				entity = ecsWorld.NewEntity();
+
+				var pool = ecsWorld.GetPool<T>();
+				pool.Add(entity);
+			}
+
+			return entity;
+		}
 	}
 }
