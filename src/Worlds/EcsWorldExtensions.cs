@@ -32,5 +32,14 @@ namespace Submodules.EcsLite
 
 			return ref pool.Get(entity);
 		}
+
+		public static void RemoveSingleEntity<T>(this EcsWorld ecsWorld) where T : struct
+		{
+			var entity = GetSingleEntity<T>(ecsWorld);
+			if (entity != EcsWorld.NullEntityIndex)
+			{
+				ecsWorld.DestroyEntity(entity);
+			}
+		}
 	}
 }

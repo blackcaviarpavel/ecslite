@@ -106,9 +106,9 @@ namespace Submodules.EcsLite {
             _destroyed = false;
         }
 
-        public void Destroy () {
+        public void Utilize () {
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
-            if (CheckForLeakedEntities ()) { throw new Exception ($"Empty entity detected before EcsWorld.Destroy()."); }
+            if (CheckForLeakedEntities ()) { throw new Exception ($"Empty entity detected before EcsWorld.Utilize()."); }
 #endif
             _destroyed = true;
             for (var i = _entitiesCount - 1; i >= 0; i--) {
