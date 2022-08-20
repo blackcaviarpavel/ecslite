@@ -55,6 +55,17 @@ namespace Submodules.EcsLite {
         }
 
         [MethodImpl (MethodImplOptions.AggressiveInlining)]
+        public int GetSingleEntity() {
+#if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
+            if (_denseEntities.Length > 1) { throw new Exception ("Entities count more then one."); }
+#endif
+            if (_denseEntities.Length == 1) {
+                return _denseEntities[0];
+            } 
+            return EcsWorld.NullEntityIndex;
+        }
+
+        [MethodImpl (MethodImplOptions.AggressiveInlining)]
         public int[] GetSparseIndex () {
             return SparseEntities;
         }
