@@ -148,7 +148,7 @@ namespace Submodules.EcsLite {
                 _autoReset?.Invoke (ref _denseItems[idx]);
             }
             _sparseItems[entity] = idx;
-            _world.OnEntityChangeInternal (entity, _id, true);
+            _world.OnEntityChangeInternal (entity, _id, EntityUpdateType.Added);
             _world.Entities[entity].ComponentsCount++;
 #if DEBUG || LEOECSLITE_WORLD_EVENTS
             _world.RaiseEntityChangeEvent (entity);
@@ -157,7 +157,7 @@ namespace Submodules.EcsLite {
         }
 
         [MethodImpl (MethodImplOptions.AggressiveInlining)]
-        public ref T Set (int entity)
+        public ref T Change (int entity)
         {
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
             if (!_world.IsEntityAliveInternal (entity)) { throw new Exception ("Cant touch destroyed entity."); }
@@ -166,17 +166,8 @@ namespace Submodules.EcsLite {
                 return ref Add(entity);
             }
             
+            _world.OnEntityChangeInternal (entity, _id, EntityUpdateType.Changed);
             return ref Get(entity);
-        }
-        
-        [MethodImpl (MethodImplOptions.AggressiveInlining)]
-        public ref T Change (int entity)
-        {
-#if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
-            if (!_world.IsEntityAliveInternal (entity)) { throw new Exception ("Cant touch destroyed entity."); }
-#endif
-            Remove(entity);
-            return ref Add(entity);
         }
 
         [MethodImpl (MethodImplOptions.AggressiveInlining)]
@@ -202,7 +193,7 @@ namespace Submodules.EcsLite {
 #endif
             ref var sparseData = ref _sparseItems[entity];
             if (sparseData > 0) {
-                _world.OnEntityChangeInternal (entity, _id, false);
+                _world.OnEntityChangeInternal (entity, _id, EntityUpdateType.Removed);
                 if (_recycledItemsCount == _recycledItems.Length) {
                     Array.Resize (ref _recycledItems, _recycledItemsCount << 1);
                 }

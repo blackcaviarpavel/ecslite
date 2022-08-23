@@ -374,10 +374,10 @@ namespace Submodules.EcsLite {
             return (filter, true);
         }
 
-        public void OnEntityChangeInternal (int entity, int componentType, bool added) {
+        public void OnEntityChangeInternal (int entity, int componentType, EntityUpdateType updateType) {
             var includeList = _filtersByIncludedComponents[componentType];
             var excludeList = _filtersByExcludedComponents[componentType];
-            if (added) {
+            if (updateType == EntityUpdateType.Added) {
                 // add component.
                 if (includeList != null) {
                     foreach (var filter in includeList) {
@@ -399,7 +399,28 @@ namespace Submodules.EcsLite {
                         }
                     }
                 }
-            } else {
+            } else if (updateType == EntityUpdateType.Changed){
+                if (includeList != null) {
+                    foreach (var filter in includeList) {
+                        if (IsMaskCompatible (filter.GetMask (), entity)) {
+#if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
+                            if (filter.SparseEntities[entity] == 0) { throw new Exception ("Entity not in filter."); }
+#endif
+                            filter.UpdateEntity (entity);
+                        }
+                    }
+                }
+                if (excludeList != null) {
+                    foreach (var filter in excludeList) {
+                        if (IsMaskCompatibleWithout (filter.GetMask (), entity, componentType)) {
+#if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
+                            if (filter.SparseEntities[entity] == 0) { throw new Exception ("Entity not in filter."); }
+#endif
+                            filter.UpdateEntity (entity);
+                        }
+                    }
+                }
+            } else if (updateType == EntityUpdateType.Removed) {
                 // remove component.
                 if (includeList != null) {
                     foreach (var filter in includeList) {

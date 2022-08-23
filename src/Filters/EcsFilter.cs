@@ -123,6 +123,13 @@ namespace Submodules.EcsLite {
         }
 
         [MethodImpl (MethodImplOptions.AggressiveInlining)]
+        internal void UpdateEntity(int entity) {
+#if LEOECSLITE_FILTER_EVENTS
+            ProcessEventListeners (true, entity);
+#endif
+        }
+
+        [MethodImpl (MethodImplOptions.AggressiveInlining)]
         internal void RemoveEntity (int entity) {
             if (AddDelayedOp (false, entity)) { return; }
             var idx = SparseEntities[entity] - 1;
