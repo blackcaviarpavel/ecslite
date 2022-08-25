@@ -10,7 +10,7 @@ namespace Submodules.EcsLite
 			return filter.GetSingleEntity();
 		}
 
-		public static ref T SetSingleEntity<T>(this EcsWorld ecsWorld) where T : struct
+		public static ref T ChangeSingleEntity<T>(this EcsWorld ecsWorld) where T : struct
 		{
 			var entity = GetSingleEntity<T>(ecsWorld);
 			var pool = ecsWorld.GetPool<T>();
