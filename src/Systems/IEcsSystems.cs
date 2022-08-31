@@ -3,7 +3,6 @@
 namespace Submodules.EcsLite
 {
 	public interface IEcsSystems {
-		T GetShared<T> () where T : class;
 		IEcsSystems AddWorld (EcsWorld world, string name);
 		EcsWorld GetWorld (string name = null);
 		IReadOnlyDictionary<string, EcsWorld> GetAllNamedWorlds ();

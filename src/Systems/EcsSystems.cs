@@ -19,21 +19,15 @@ namespace Submodules.EcsLite {
         readonly Dictionary<string, EcsWorld> _worlds;
         readonly List<IEcsSystem> _allSystems;
         readonly List<IEcsExecuteSystem> _runSystems;
-        readonly object _shared;
 #if DEBUG
         bool _inited;
 #endif
 
         public EcsSystems (EcsWorld defaultWorld, object shared = null) {
             _defaultWorld = defaultWorld;
-            _shared = shared;
             _worlds = new Dictionary<string, EcsWorld> (8);
             _allSystems = new List<IEcsSystem> (128);
             _runSystems = new List<IEcsExecuteSystem> (128);
-        }
-
-        public virtual T GetShared<T> () where T : class {
-            return _shared as T;
         }
 
         public virtual IEcsSystems AddWorld (EcsWorld world, string name) {
