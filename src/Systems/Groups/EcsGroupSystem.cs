@@ -16,11 +16,6 @@ namespace Submodules.EcsLite.ExtendedSystems {
     [Il2CppSetOption (Option.ArrayBoundsChecks, false)]
 #endif
     public static class Extensions {
-#if !LEOECSLITE_DI
-        public static IEcsSystems AddGroup (this IEcsSystems systems, string groupName, bool defaultState, string eventWorldName, params IEcsSystem[] nestedSystems) {
-            return systems.Add (new EcsGroupSystem (systems, groupName, defaultState, eventWorldName, nestedSystems));
-        }
-#endif
         public static IEcsSystems DelHere<T> (this IEcsSystems systems, string worldName = null) where T : struct {
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
             if (systems.GetWorld (worldName) == null) { throw new System.Exception ($"Requested world \"{(string.IsNullOrEmpty (worldName) ? "[default]" : worldName)}\" not found."); }
