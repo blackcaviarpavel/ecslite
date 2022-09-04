@@ -18,7 +18,8 @@ namespace Submodules.EcsLite {
         readonly EcsWorld _defaultWorld;
         readonly Dictionary<string, EcsWorld> _worlds;
         readonly List<IEcsSystem> _allSystems;
-        readonly List<IEcsExecuteSystem> _runSystems;
+        readonly List<IEcsRunSystem> _runSystems;
+        readonly List<IEcsLateRunSystem> _lateRunSystems;
 #if DEBUG
         bool _inited;
 #endif
@@ -27,7 +28,7 @@ namespace Submodules.EcsLite {
             _defaultWorld = defaultWorld;
             _worlds = new Dictionary<string, EcsWorld> (8);
             _allSystems = new List<IEcsSystem> (128);
-            _runSystems = new List<IEcsExecuteSystem> (128);
+            _runSystems = new List<IEcsRunSystem> (128);
         }
 
         public virtual IEcsSystems AddWorld (EcsWorld world, string name) {
@@ -58,8 +59,11 @@ namespace Submodules.EcsLite {
             if (_inited) { throw new System.Exception ("Cant add system after initialization."); }
 #endif
             _allSystems.Add (system);
-            if (system is IEcsExecuteSystem runSystem) {
+            if (system is IEcsRunSystem runSystem) {
                 _runSystems.Add (runSystem);
+            }
+            if (system is IEcsLateRunSystem lateRunSystem) {
+                _lateRunSystems.Add (lateRunSystem);
             }
             return this;
         }
@@ -100,10 +104,23 @@ namespace Submodules.EcsLite {
             if (!_inited) { throw new System.Exception ("Cant run without initialization."); }
 #endif
             for (int i = 0, iMax = _runSystems.Count; i < iMax; i++) {
-                _runSystems[i].Execute ();
+                _runSystems[i].Run ();
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
                 var worldName = CheckForLeakedEntities (this);
                 if (worldName != null) { throw new System.Exception ($"Empty entity detected in world \"{worldName}\" after {_runSystems[i].GetType ().Name}.Run()."); }
+#endif
+            }
+        }
+
+        public virtual void LateRun () {
+#if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
+            if (!_inited) { throw new System.Exception ("Cant run without initialization."); }
+#endif
+            for (int i = 0, iMax = _lateRunSystems.Count; i < iMax; i++) {
+                _lateRunSystems[i].LateRun();
+#if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
+                var worldName = CheckForLeakedEntities (this);
+                if (worldName != null) { throw new System.Exception ($"Empty entity detected in world \"{worldName}\" after {_lateRunSystems[i].GetType ().Name}.LateRun()."); }
 #endif
             }
         }
@@ -130,6 +147,7 @@ namespace Submodules.EcsLite {
             _worlds.Clear ();
             _allSystems.Clear ();
             _runSystems.Clear ();
+            _lateRunSystems.Clear ();
 #if DEBUG
             _inited = false;
 #endif

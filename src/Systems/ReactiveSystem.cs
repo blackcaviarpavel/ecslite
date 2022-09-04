@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Submodules.EcsLite
 {
 #if LEOECSLITE_FILTER_EVENTS
-	public abstract class ReactiveSystem : IEcsExecuteSystem, IEcsInitializeSystem, IEcsDestroySystem, IEcsFilterEventListener
+	public abstract class ReactiveSystem : IEcsRunSystem, IEcsInitializeSystem, IEcsDestroySystem, IEcsFilterEventListener
 	{
 		private readonly List<EcsFilterMonitor> _listeningFilters = new(4);
 		private readonly List<int> _entities = new();
@@ -35,7 +35,7 @@ namespace Submodules.EcsLite
 			}
 		}
 
-		public void Execute()
+		public void Run()
 		{
 			if (_entities.Count == 0)
 			{

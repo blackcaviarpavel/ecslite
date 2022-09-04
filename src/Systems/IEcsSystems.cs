@@ -10,6 +10,7 @@ namespace Submodules.EcsLite
 		IReadOnlyList<IEcsSystem> GetAllSystems ();
 		void Init ();
 		void Run ();
+		void LateRun ();
 		void Destroy ();
 	}
 }

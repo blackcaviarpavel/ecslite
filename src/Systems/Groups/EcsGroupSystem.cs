@@ -28,7 +28,7 @@ namespace Submodules.EcsLite.ExtendedSystems {
     [Il2CppSetOption (Option.NullChecks, false)]
     [Il2CppSetOption (Option.ArrayBoundsChecks, false)]
 #endif
-    public sealed class DelHereSystem<T> : IEcsExecuteSystem where T : struct {
+    public sealed class DelHereSystem<T> : IEcsRunSystem where T : struct {
         readonly EcsFilter _filter;
         readonly EcsPool<T> _pool;
 
@@ -37,7 +37,7 @@ namespace Submodules.EcsLite.ExtendedSystems {
             _pool = world.GetPool<T> ();
         }
 
-        public void Execute () {
+        public void Run () {
             foreach (var entity in _filter) {
                 _pool.Remove(entity);
             }
@@ -51,12 +51,15 @@ namespace Submodules.EcsLite.ExtendedSystems {
     public class EcsGroupSystem :
         IEcsPreInitSystem,
         IEcsInitializeSystem,
-        IEcsExecuteSystem,
+        IEcsRunSystem,
+        IEcsLateRunSystem,
         IEcsDestroySystem,
         IEcsPostDestroySystem {
         readonly IEcsSystem[] _nestedSystems;
-        readonly IEcsExecuteSystem[] _runSystems;
+        readonly IEcsRunSystem[] _runSystems;
+        readonly IEcsLateRunSystem[] _lateRunSystems;
         readonly int _runSystemsCount;
+        readonly int _lateRunSystemsCount;
         readonly string _eventsWorldName;
         readonly string _name;
         readonly IEcsSystems _systems;
@@ -79,10 +82,15 @@ namespace Submodules.EcsLite.ExtendedSystems {
             _eventsWorldName = eventsWorldName;
             _nestedSystems = nestedSystems;
             _runSystemsCount = 0;
-            _runSystems = new IEcsExecuteSystem[_nestedSystems.Length];
+            _runSystems = new IEcsRunSystem[_nestedSystems.Length];
+            _lateRunSystemsCount = 0;
+            _lateRunSystems = new IEcsLateRunSystem[_nestedSystems.Length];
             for (var i = 0; i < _nestedSystems.Length; i++) {
-                if (_nestedSystems[i] is IEcsExecuteSystem runSystem) {
+                if (_nestedSystems[i] is IEcsRunSystem runSystem) {
                     _runSystems[_runSystemsCount++] = runSystem;
+                }
+                if (_nestedSystems[i] is IEcsLateRunSystem lateRunSystem) {
+                    _lateRunSystems[_lateRunSystemsCount++] = lateRunSystem;
                 }
             }
         }
@@ -114,7 +122,7 @@ namespace Submodules.EcsLite.ExtendedSystems {
             }
         }
 
-        public void Execute () {
+        public void Run () {
             foreach (var entity in _filter) {
                 ref var evt = ref _pool.Get (entity);
                 if (evt.Name == _name) {
@@ -124,10 +132,23 @@ namespace Submodules.EcsLite.ExtendedSystems {
             }
             if (_state) {
                 for (var i = 0; i < _runSystemsCount; i++) {
-                    _runSystems[i].Execute();
+                    _runSystems[i].Run();
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
                     var worldName = EcsSystems.CheckForLeakedEntities (_systems);
                     if (worldName != null) { throw new System.Exception ($"Empty entity detected in world \"{worldName}\" after {_runSystems[i].GetType ().Name}.Run()."); }
+#endif
+                }
+            }
+        }
+
+        public void LateRun()
+        {
+            if (_state) {
+                for (var i = 0; i < _lateRunSystemsCount; i++) {
+                    _lateRunSystems[i].LateRun();
+#if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
+                    var worldName = EcsSystems.CheckForLeakedEntities (_systems);
+                    if (worldName != null) { throw new System.Exception ($"Empty entity detected in world \"{worldName}\" after {_lateRunSystems[i].GetType ().Name}.LateRun()."); }
 #endif
                 }
             }
