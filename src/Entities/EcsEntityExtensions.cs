@@ -14,7 +14,7 @@ namespace Submodules.EcsLite
 		[MethodImpl (MethodImplOptions.AggressiveInlining)]
 		public static bool Unpack (this in EcsPackedEntity packed, EcsWorld world, out int entity) {
 			if (!world.IsAlive () || !world.IsEntityAliveInternal (packed.Id) || world.GetEntityGen (packed.Id) != packed.Gen) {
-				entity = -1;
+				entity = EcsWorld.NullEntityIndex;
 				return false;
 			}
 			entity = packed.Id;
@@ -39,7 +39,7 @@ namespace Submodules.EcsLite
 		public static bool Unpack (this in EcsPackedEntityWithWorld packedEntity, out EcsWorld world, out int entity) {
 			if (packedEntity.World == null || !packedEntity.World.IsAlive () || !packedEntity.World.IsEntityAliveInternal (packedEntity.Id) || packedEntity.World.GetEntityGen (packedEntity.Id) != packedEntity.Gen) {
 				world = null;
-				entity = -1;
+				entity = EcsWorld.NullEntityIndex;
 				return false;
 			}
 			world = packedEntity.World;
