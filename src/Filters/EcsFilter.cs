@@ -49,8 +49,15 @@ namespace Submodules.EcsLite {
             return _entitiesCount;
         }
 
-        [MethodImpl (MethodImplOptions.AggressiveInlining)]
-        public int[] GetEntities () {
+        [MethodImpl (MethodImplOptions.AggressiveInlining), Obsolete]
+        public int[] GetEntities ()
+        {
+            var entities = new int[_entitiesCount];
+            for (var i = 0; i < _entitiesCount; i++)
+            {
+                entities[i] = _denseEntities[i];
+            }
+
             return _denseEntities;
         }
 
