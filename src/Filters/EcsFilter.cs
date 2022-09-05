@@ -66,7 +66,7 @@ namespace Submodules.EcsLite {
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
             if (_entitiesCount > 1) { throw new Exception ("Entities count more then one."); }
 #endif
-            if (_denseEntities.Length == 1) {
+            if (_entitiesCount == 1) {
                 return _denseEntities[0];
             } 
             return EcsWorld.NullEntityIndex;
