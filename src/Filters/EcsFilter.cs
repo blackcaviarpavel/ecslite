@@ -58,7 +58,7 @@ namespace Submodules.EcsLite {
                 entities[i] = _denseEntities[i];
             }
 
-            return _denseEntities;
+            return entities;
         }
 
         [MethodImpl (MethodImplOptions.AggressiveInlining)]
