@@ -29,6 +29,7 @@ namespace Submodules.EcsLite {
             _worlds = new Dictionary<string, EcsWorld> (8);
             _allSystems = new List<IEcsSystem> (128);
             _runSystems = new List<IEcsRunSystem> (128);
+            _lateRunSystems = new List<IEcsLateRunSystem> (128);
         }
 
         public virtual IEcsSystems AddWorld (EcsWorld world, string name) {
