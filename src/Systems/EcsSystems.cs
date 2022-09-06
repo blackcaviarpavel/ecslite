@@ -20,9 +20,8 @@ namespace Submodules.EcsLite {
         readonly List<IEcsSystem> _allSystems;
         readonly List<IEcsRunSystem> _runSystems;
         readonly List<IEcsLateRunSystem> _lateRunSystems;
-#if DEBUG
-        bool _inited;
-#endif
+        
+        private bool _inited;
 
         public EcsSystems (EcsWorld defaultWorld, object shared = null) {
             _defaultWorld = defaultWorld;
@@ -73,6 +72,10 @@ namespace Submodules.EcsLite {
             return _allSystems;
         }
 
+        public bool IsActive() {
+            return _inited;
+        }
+
         public virtual void Init () {
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
             if (_inited) { throw new System.Exception ("Already initialized."); }
@@ -95,9 +98,8 @@ namespace Submodules.EcsLite {
 #endif
                 }
             }
-#if DEBUG
+            
             _inited = true;
-#endif
         }
 
         public virtual void Run () {
@@ -149,9 +151,8 @@ namespace Submodules.EcsLite {
             _allSystems.Clear ();
             _runSystems.Clear ();
             _lateRunSystems.Clear ();
-#if DEBUG
+            
             _inited = false;
-#endif
         }
 
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS

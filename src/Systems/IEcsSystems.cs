@@ -8,6 +8,7 @@ namespace Submodules.EcsLite
 		IReadOnlyDictionary<string, EcsWorld> GetAllNamedWorlds ();
 		IEcsSystems Add (IEcsSystem system);
 		IReadOnlyList<IEcsSystem> GetAllSystems ();
+		bool IsActive();
 		void Init ();
 		void Run ();
 		void LateRun ();

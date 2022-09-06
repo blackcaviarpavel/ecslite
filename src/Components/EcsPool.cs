@@ -133,6 +133,7 @@ namespace Submodules.EcsLite {
 
         public ref T Add (int entity) {
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
+            if (entity == EcsWorld.NullEntityIndex) { throw new Exception ("Null reference entity."); }
             if (!_world.IsEntityAliveInternal (entity)) { throw new Exception ("Cant touch destroyed entity."); }
             if (_sparseItems[entity] > 0) { throw new Exception ($"Component \"{typeof (T).Name}\" already attached to entity."); }
 #endif
@@ -160,6 +161,7 @@ namespace Submodules.EcsLite {
         public ref T Change (int entity)
         {
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
+            if (entity == EcsWorld.NullEntityIndex) { throw new Exception ("Null reference entity."); }
             if (!_world.IsEntityAliveInternal (entity)) { throw new Exception ("Cant touch destroyed entity."); }
 #endif
             if (_sparseItems[entity] == 0) {
@@ -173,6 +175,7 @@ namespace Submodules.EcsLite {
         [MethodImpl (MethodImplOptions.AggressiveInlining)]
         public ref T Get (int entity) {
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
+            if (entity == EcsWorld.NullEntityIndex) { throw new Exception ("Null reference entity."); }
             if (!_world.IsEntityAliveInternal (entity)) { throw new Exception ("Cant touch destroyed entity."); }
             if (_sparseItems[entity] == 0) { throw new Exception ($"Cant get \"{typeof (T).Name}\" component - not attached."); }
 #endif
@@ -182,6 +185,7 @@ namespace Submodules.EcsLite {
         [MethodImpl (MethodImplOptions.AggressiveInlining)]
         public bool Has (int entity) {
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
+            if (entity == EcsWorld.NullEntityIndex) { throw new Exception ("Null reference entity."); }
             if (!_world.IsEntityAliveInternal (entity)) { throw new Exception ("Cant touch destroyed entity."); }
 #endif
             return _sparseItems[entity] > 0;
@@ -189,6 +193,7 @@ namespace Submodules.EcsLite {
 
         public void Remove (int entity) {
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
+            if (entity == EcsWorld.NullEntityIndex) { throw new Exception ("Null reference entity."); }
             if (!_world.IsEntityAliveInternal (entity)) { throw new Exception ("Cant touch destroyed entity."); }
 #endif
             ref var sparseData = ref _sparseItems[entity];
