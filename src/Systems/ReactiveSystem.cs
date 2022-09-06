@@ -1,6 +1,7 @@
 ﻿#define LEOECSLITE_FILTER_EVENTS
 
 using System.Collections.Generic;
+using Sirenix.Utilities;
 using UnityEngine;
 
 namespace Submodules.EcsLite
@@ -8,8 +9,9 @@ namespace Submodules.EcsLite
 #if LEOECSLITE_FILTER_EVENTS
 	public abstract class ReactiveSystem : IEcsRunSystem, IEcsInitializeSystem, IEcsDestroySystem, IEcsFilterEventListener
 	{
-		private readonly List<EcsFilterMonitor> _listeningFilters = new(4);
-		private readonly List<int> _entities = new();
+		private readonly HashSet<EcsFilterMonitor> _listeningFilters = new(4);
+		private readonly HashSet<int> _entities = new(10);
+		private readonly HashSet<int> _cachedEntities = new(10);
 		private MonitoringType _monitoringType = MonitoringType.Unknown;
 		private bool _isActive;
 
@@ -43,7 +45,16 @@ namespace Submodules.EcsLite
 				return;
 			}
 
-			Process(_entities);
+			_cachedEntities.Clear();
+			foreach (var monitor in _listeningFilters)
+			{
+				foreach (var filteredEntity in monitor.Filter)
+				{
+					_cachedEntities.Add(filteredEntity);
+				}
+			}
+
+			Process(_cachedEntities);
 			
 			_entities.Clear();
 		}
@@ -53,6 +64,19 @@ namespace Submodules.EcsLite
 			Deactivate();
 			
 			OnDestroy();
+		}
+
+		protected void ForceProcess()
+		{
+			_cachedEntities.Clear();
+			foreach (var monitor in _listeningFilters)
+			{
+				foreach (var entity in monitor.Filter)
+				{
+					_cachedEntities.Add(entity);
+				}
+			}
+			Process(_cachedEntities);
 		}
 
 		protected virtual void OnInitialize() { }
