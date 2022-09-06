@@ -1,6 +1,7 @@
 ﻿#define LEOECSLITE_FILTER_EVENTS
 
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Submodules.EcsLite
 {
@@ -14,9 +15,9 @@ namespace Submodules.EcsLite
 
 		public void Initialize()
 		{
-			Activate();
-
 			OnInitialize();
+
+			Activate();
 		}
 		
 		public void OnEntityAdded(int entity)
@@ -87,8 +88,14 @@ namespace Submodules.EcsLite
 
 			foreach (var monitor in _listeningFilters)
 			{
+				if (monitor.Filter == null)
+				{
+					Debug.LogError($"Filter in reactive system {GetType()} cannot be null");
+					continue;
+				}
+				
 				UpdateMonitoringType(monitor);
-
+				
 				monitor.Filter.AddEventListener(this);
 			}
 		}
@@ -101,6 +108,9 @@ namespace Submodules.EcsLite
 			}
 
 			_isActive = false;
+			_entities.Clear();
+			_listeningFilters.Clear();
+			_monitoringType = MonitoringType.Unknown;
 			
 			foreach (var monitor in _listeningFilters)
 			{
