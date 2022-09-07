@@ -17,9 +17,9 @@ namespace Submodules.EcsLite
 
 		public void Initialize()
 		{
-			OnInitialize();
-
 			Activate();
+			
+			OnInitialize();
 		}
 		
 		public void OnEntityAdded(int entity)
