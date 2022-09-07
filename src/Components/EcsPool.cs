@@ -130,6 +130,21 @@ namespace Submodules.EcsLite {
         public ref int GetRawRecycledItemsCount () {
             return ref _recycledItemsCount;
         }
+        
+        [MethodImpl (MethodImplOptions.AggressiveInlining)]
+        public void Set (int entity, bool added)
+        {
+#if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
+            if (entity == EcsWorld.NullEntityIndex) { throw new Exception ("Null reference entity."); }
+            if (!_world.IsEntityAliveInternal (entity)) { throw new Exception ("Cant touch destroyed entity."); }
+#endif
+            if (_sparseItems[entity] == 0 && added) {
+                Add(entity);
+            }
+            else if (!added) {
+                Remove(entity);
+            }
+        }
 
         public ref T Add (int entity) {
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
