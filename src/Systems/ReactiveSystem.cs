@@ -46,12 +46,9 @@ namespace Submodules.EcsLite
 			}
 
 			_cachedEntities.Clear();
-			foreach (var monitor in _listeningFilters)
+			foreach (var entity in _entities)
 			{
-				foreach (var filteredEntity in monitor.Filter)
-				{
-					_cachedEntities.Add(filteredEntity);
-				}
+				_cachedEntities.Add(entity);
 			}
 
 			Process(_cachedEntities);
