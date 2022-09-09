@@ -82,7 +82,7 @@ namespace Submodules.EcsLite {
 #endif
             foreach (var system in _allSystems) {
                 if (system is IEcsPreInitSystem initSystem) {
-                    initSystem.PreInit ();
+                    initSystem.PreInit (this);
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
                     var worldName = CheckForLeakedEntities (this);
                     if (worldName != null) { throw new System.Exception ($"Empty entity detected in world \"{worldName}\" after {initSystem.GetType ().Name}.PreInit()."); }

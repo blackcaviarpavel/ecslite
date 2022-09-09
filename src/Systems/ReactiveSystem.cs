@@ -7,13 +7,19 @@ using UnityEngine;
 namespace Submodules.EcsLite
 {
 #if LEOECSLITE_FILTER_EVENTS
-	public abstract class ReactiveSystem : IEcsRunSystem, IEcsInitializeSystem, IEcsDestroySystem, IEcsFilterEventListener
+	public abstract class ReactiveSystem : IEcsPreInitSystem, IEcsRunSystem, IEcsInitializeSystem, IEcsDestroySystem, IEcsFilterEventListener
 	{
 		private readonly HashSet<EcsFilterMonitor> _listeningFilters = new(4);
-		private readonly HashSet<int> _entities = new(10);
+		private readonly HashSet<EcsPackedEntity> _triggeredEntities = new(10);
 		private readonly HashSet<int> _cachedEntities = new(10);
 		private MonitoringType _monitoringType = MonitoringType.Unknown;
+		private EcsWorld _ecsWorld;
 		private bool _isActive;
+
+		public void PreInit(IEcsSystems systems)
+		{
+			_ecsWorld = systems.GetWorld();
+		}
 
 		public void Initialize()
 		{
@@ -26,7 +32,7 @@ namespace Submodules.EcsLite
 		{
 			if (_monitoringType is MonitoringType.Added or MonitoringType.AddedOrRemoved)
 			{
-				_entities.Add(entity);
+				_triggeredEntities.Add(_ecsWorld.PackEntity(entity));
 			}
 		}
 
@@ -34,26 +40,29 @@ namespace Submodules.EcsLite
 		{
 			if (_monitoringType is MonitoringType.Removed or MonitoringType.AddedOrRemoved)
 			{
-				_entities.Add(entity);
+				_triggeredEntities.Add(_ecsWorld.PackEntity(entity));
 			}
 		}
 
 		public void Run()
 		{
-			if (_entities.Count == 0)
+			if (_triggeredEntities.Count == 0)
 			{
 				return;
 			}
 
 			_cachedEntities.Clear();
-			foreach (var entity in _entities)
+			foreach (var packedEntity in _triggeredEntities)
 			{
-				_cachedEntities.Add(entity);
+				if (packedEntity.Unpack(_ecsWorld, out var unpackedEntity))
+				{
+					_cachedEntities.Add(unpackedEntity);
+				}
 			}
 
 			Process(_cachedEntities);
 			
-			_entities.Clear();
+			_triggeredEntities.Clear();
 		}
 
 		public void Destroy()
@@ -129,7 +138,7 @@ namespace Submodules.EcsLite
 			}
 
 			_isActive = false;
-			_entities.Clear();
+			_triggeredEntities.Clear();
 			_listeningFilters.Clear();
 			_monitoringType = MonitoringType.Unknown;
 			

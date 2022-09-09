@@ -1,6 +1,6 @@
 ﻿namespace Submodules.EcsLite
 {
 	public interface IEcsPreInitSystem : IEcsSystem {
-		void PreInit ();
+		void PreInit (IEcsSystems systems);
 	}
 }

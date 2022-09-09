@@ -95,13 +95,13 @@ namespace Submodules.EcsLite.ExtendedSystems {
             }
         }
 
-        public void PreInit () {
+        public void PreInit (IEcsSystems systems) {
             var world = _systems.GetWorld (_eventsWorldName);
             _pool = world.GetPool<EcsGroupSystemState> ();
             _filter = world.Filter<EcsGroupSystemState> ().End ();
             for (var i = 0; i < _nestedSystems.Length; i++) {
                 if (_nestedSystems[i] is IEcsPreInitSystem preInitSystem) {
-                    preInitSystem.PreInit ();
+                    preInitSystem.PreInit (systems);
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
                     var worldName = EcsSystems.CheckForLeakedEntities (_systems);
                     if (worldName != null) { throw new System.Exception ($"Empty entity detected in world \"{worldName}\" after {preInitSystem.GetType ().Name}.PreInit()."); }
