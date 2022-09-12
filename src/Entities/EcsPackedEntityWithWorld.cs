@@ -9,7 +9,7 @@
 		internal object[] DebugComponentsView {
 			get {
 				object[] list = null;
-				if (World != null && World.IsAlive () && World.IsEntityAliveInternal (Id) && World.GetEntityGen (Id) == Gen) {
+				if (World != null && World.IsEntityAliveInternal (Id) && World.GetEntityGen (Id) == Gen) {
 					World.GetComponents (Id, ref list);
 				}
 				return list;
@@ -18,7 +18,7 @@
 		// For using in IDE debugger.
 		internal int DebugComponentsCount {
 			get {
-				if (World != null && World.IsAlive () && World.IsEntityAliveInternal (Id) && World.GetEntityGen (Id) == Gen) {
+				if (World != null && World.IsEntityAliveInternal (Id) && World.GetEntityGen (Id) == Gen) {
 					return World.GetComponentsCount (Id);
 				}
 				return 0;
@@ -28,7 +28,7 @@
 		// For using in IDE debugger.
 		public override string ToString () {
 			if (Id == 0 && Gen == 0) { return "Entity-Null"; }
-			if (World == null || !World.IsAlive () || !World.IsEntityAliveInternal (Id) || World.GetEntityGen (Id) != Gen) { return "Entity-NonAlive"; }
+			if (World == null || !World.IsEntityAliveInternal (Id) || World.GetEntityGen (Id) != Gen) { return "Entity-NonAlive"; }
 			System.Type[] types = null;
 			var count = World.GetComponentTypes (Id, ref types);
 			System.Text.StringBuilder sb = null;

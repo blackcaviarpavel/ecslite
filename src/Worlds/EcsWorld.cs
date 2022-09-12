@@ -19,23 +19,23 @@ namespace Submodules.EcsLite {
     public class EcsWorld {
         public const int NullEntityIndex = -1;
         
+        private readonly Config _cfg;
         internal EntityData[] Entities;
         int _entitiesCount;
         int[] _recycledEntities;
         int _recycledEntitiesCount;
         IEcsPool[] _pools;
         int _poolsCount;
-        readonly int _poolDenseSize;
-        readonly int _poolRecycledSize;
-        readonly Dictionary<Type, IEcsPool> _poolHashes;
-        readonly Dictionary<int, EcsFilter> _hashedFilters;
-        readonly List<EcsFilter> _allFilters;
+        int _poolDenseSize;
+        int _poolRecycledSize;
+        Dictionary<Type, IEcsPool> _poolHashes;
+        Dictionary<int, EcsFilter> _hashedFilters;
+        List<EcsFilter> _allFilters;
         List<EcsFilter>[] _filtersByIncludedComponents;
         List<EcsFilter>[] _filtersByExcludedComponents;
         Mask[] _masks;
         int _masksCount;
 
-        bool _destroyed;
 #if DEBUG || LEOECSLITE_WORLD_EVENTS
         List<IEcsWorldEventListener> _eventListeners;
 
@@ -77,6 +77,8 @@ namespace Submodules.EcsLite {
 #endif
 
         public EcsWorld (in Config cfg = default) {
+            _cfg = cfg;
+            
             // entities.
             var capacity = cfg.Entities > 0 ? cfg.Entities : Config.EntitiesDefault;
             Entities = new EntityData[capacity];
@@ -103,36 +105,18 @@ namespace Submodules.EcsLite {
 #if DEBUG || LEOECSLITE_WORLD_EVENTS
             _eventListeners = new List<IEcsWorldEventListener> (4);
 #endif
-            _destroyed = false;
         }
 
-        public void Utilize () {
+        public void CleanUp () {
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
             if (CheckForLeakedEntities ()) { throw new Exception ($"Empty entity detected before EcsWorld.Utilize()."); }
 #endif
-            _destroyed = true;
             for (var i = _entitiesCount - 1; i >= 0; i--) {
                 ref var entityData = ref Entities[i];
                 if (entityData.ComponentsCount > 0) {
                     DestroyEntity (i);
                 }
             }
-            _pools = Array.Empty<IEcsPool> ();
-            _poolHashes.Clear ();
-            _hashedFilters.Clear ();
-            _allFilters.Clear ();
-            _filtersByIncludedComponents = Array.Empty<List<EcsFilter>> ();
-            _filtersByExcludedComponents = Array.Empty<List<EcsFilter>> ();
-#if DEBUG || LEOECSLITE_WORLD_EVENTS
-            for (var ii = _eventListeners.Count - 1; ii >= 0; ii--) {
-                _eventListeners[ii].OnWorldDestroyed (this);
-            }
-#endif
-        }
-
-        [MethodImpl (MethodImplOptions.AggressiveInlining)]
-        public bool IsAlive () {
-            return !_destroyed;
         }
 
         public int NewEntity () {
