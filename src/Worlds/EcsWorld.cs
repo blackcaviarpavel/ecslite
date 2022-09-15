@@ -2,6 +2,7 @@
 // The Proprietary or MIT-Red License
 // Copyright (c) 2012-2022 Leopotam <leopotam@yandex.ru>
 // ----------------------------------------------------------------------------
+#define ENABLE_IL2CPP
 
 using System;
 using System.Collections.Generic;
