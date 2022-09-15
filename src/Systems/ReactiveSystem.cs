@@ -1,7 +1,6 @@
 ﻿#define LEOECSLITE_FILTER_EVENTS
 
 using System.Collections.Generic;
-using Sirenix.Utilities;
 using UnityEngine;
 
 namespace Submodules.EcsLite
@@ -113,16 +112,16 @@ namespace Submodules.EcsLite
 			}
 
 			_isActive = true;
+			
 			_listeningFilters.Clear();
-			_listeningFilters.AddRange(Subscribe());
-
-			foreach (var monitor in _listeningFilters)
+			foreach (var monitor in Subscribe())
 			{
 				if (monitor.Filter == null)
 				{
 					Debug.LogError($"Filter in reactive system {GetType()} cannot be null");
 					continue;
 				}
+				_listeningFilters.Add(monitor);
 				
 				UpdateMonitoringType(monitor);
 				
