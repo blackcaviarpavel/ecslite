@@ -12,12 +12,13 @@ namespace Submodules.EcsLite
 		private readonly HashSet<EcsPackedEntity> _triggeredEntities = new(10);
 		private readonly HashSet<int> _cachedEntities = new(10);
 		private MonitoringType _monitoringType = MonitoringType.Unknown;
-		private EcsWorld _ecsWorld;
 		private bool _isActive;
+		
+		protected EcsWorld EcsWorld { get; private set; }
 
 		public void PreInit(IEcsSystems systems)
 		{
-			_ecsWorld = systems.GetWorld();
+			EcsWorld = systems.GetWorld();
 		}
 
 		public void Initialize()
@@ -31,7 +32,7 @@ namespace Submodules.EcsLite
 		{
 			if (_monitoringType is MonitoringType.Added or MonitoringType.AddedOrRemoved)
 			{
-				_triggeredEntities.Add(_ecsWorld.PackEntity(entity));
+				_triggeredEntities.Add(EcsWorld.PackEntity(entity));
 			}
 		}
 
@@ -39,7 +40,7 @@ namespace Submodules.EcsLite
 		{
 			if (_monitoringType is MonitoringType.Removed or MonitoringType.AddedOrRemoved)
 			{
-				_triggeredEntities.Add(_ecsWorld.PackEntity(entity));
+				_triggeredEntities.Add(EcsWorld.PackEntity(entity));
 			}
 		}
 
@@ -53,7 +54,7 @@ namespace Submodules.EcsLite
 			_cachedEntities.Clear();
 			foreach (var packedEntity in _triggeredEntities)
 			{
-				if (packedEntity.Unpack(_ecsWorld, out var unpackedEntity))
+				if (packedEntity.Unpack(EcsWorld, out var unpackedEntity))
 				{
 					_cachedEntities.Add(unpackedEntity);
 				}
