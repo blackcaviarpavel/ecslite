@@ -46,7 +46,7 @@ namespace Submodules.EcsLite {
 
         [MethodImpl (MethodImplOptions.AggressiveInlining)]
         public bool HasEntity (int entity) {
-            return entity >= 0 && entity < SparseEntities.Lenght && SparseEntities[entity] > 0;
+            return entity >= 0 && entity < SparseEntities.Length && SparseEntities[entity] > 0;
         }
 
         [MethodImpl (MethodImplOptions.AggressiveInlining)]

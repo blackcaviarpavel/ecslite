@@ -63,7 +63,7 @@ namespace Submodules.EcsLite
 				{
 					foreach (var monitor in _listeningFilters)
 					{
-						if (monitor.HasEntity(unpackedEntity))
+						if (monitor.Filter.HasEntity(unpackedEntity))
 						{
 							_cachedEntities.Add(unpackedEntity);
 							break;
