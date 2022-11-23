@@ -61,9 +61,9 @@ namespace Submodules.EcsLite
 				
 				if (_monitoringType == MonitoringType.Added)
 				{
-					for (int monitorIndex = 0; monitorIndex < _listeningFilters.Count; monitorIndex++)
+					foreach (var monitor in _listeningFilters)
 					{
-						if (_listeningFilters[monitorIndex].HasEntity(unpackedEntity))
+						if (monitor.HasEntity(unpackedEntity))
 						{
 							_cachedEntities.Add(unpackedEntity);
 							break;
