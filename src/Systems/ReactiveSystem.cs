@@ -54,10 +54,26 @@ namespace Submodules.EcsLite
 			_cachedEntities.Clear();
 			foreach (var packedEntity in _triggeredEntities)
 			{
-				if (packedEntity.Unpack(EcsWorld, out var unpackedEntity))
+				if (!packedEntity.Unpack(EcsWorld, out var unpackedEntity))
 				{
-					_cachedEntities.Add(unpackedEntity);
+					continue;
 				}
+				
+				if (_monitoringType == MonitoringType.Added)
+				{
+					for (int monitorIndex = 0; monitorIndex < _listeningFilters.Count; monitorIndex++)
+					{
+						if (_listeningFilters[monitorIndex].HasEntity(unpackedEntity))
+						{
+							_cachedEntities.Add(unpackedEntity);
+							break;
+						}
+					}
+						
+					continue;
+				}
+					
+				_cachedEntities.Add(unpackedEntity);
 			}
 
 			Process(_cachedEntities);

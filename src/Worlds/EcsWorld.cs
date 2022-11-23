@@ -395,16 +395,6 @@ namespace Submodules.EcsLite {
                         }
                     }
                 }
-                if (excludeList != null) {
-                    foreach (var filter in excludeList) {
-                        if (IsMaskCompatibleWithout (filter.GetMask (), entity, componentType)) {
-#if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
-                            if (filter.SparseEntities[entity] == 0) { throw new Exception ("Entity not in filter."); }
-#endif
-                            filter.UpdateEntity (entity);
-                        }
-                    }
-                }
             } else if (updateType == EntityUpdateType.Removed) {
                 // remove component.
                 if (includeList != null) {
