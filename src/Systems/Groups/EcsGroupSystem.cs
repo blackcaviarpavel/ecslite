@@ -41,6 +41,27 @@ namespace Submodules.EcsLite.ExtendedSystems {
             }
         }
     }
+    
+#if ENABLE_IL2CPP
+    [Il2CppSetOption (Option.NullChecks, false)]
+    [Il2CppSetOption (Option.ArrayBoundsChecks, false)]
+#endif
+    public class DestroyEntityHereSystem<T> : IEcsRunSystem where T : struct {
+        readonly EcsWorld _world;
+        readonly EcsFilter _filter;
+        readonly EcsPool<T> _pool;
+
+        public DestroyEntityHereSystem (EcsWorld world) {
+            _filter = world.Filter<T> ().End ();
+            _pool = world.GetPool<T> ();
+        }
+
+        public void Run () {
+            foreach (var entity in _filter) {
+                _world.DestroyEntity(entity);
+            }
+        }
+    }
 
 #if ENABLE_IL2CPP
     [Il2CppSetOption (Option.NullChecks, false)]
