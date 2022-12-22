@@ -52,6 +52,7 @@ namespace Submodules.EcsLite.ExtendedSystems {
         readonly EcsPool<T> _pool;
 
         public DestroyEntityHereSystem (EcsWorld world) {
+            _world = world;
             _filter = world.Filter<T> ().End ();
             _pool = world.GetPool<T> ();
         }
