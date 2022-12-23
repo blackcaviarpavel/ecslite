@@ -247,7 +247,7 @@ namespace Submodules.EcsLite {
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
                 throw new Exception ($"Pool with type {poolType} already warmed.");
 #endif
-				return rawPool;
+                return (EcsPool<T>) rawPool;
             }
             var pool = new EcsPool<T> (this, _poolsCount, _poolDenseSize, Entities.Length, _poolRecycledSize);
             _poolHashes[poolType] = pool;
