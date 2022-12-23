@@ -1,7 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
-using Submodules.EcsLite;
 
-namespace Client.ECS.Core
+namespace Submodules.EcsLite
 {
 	public static class EcsEntityExtension
 	{
