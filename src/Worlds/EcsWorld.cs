@@ -234,6 +234,21 @@ namespace Submodules.EcsLite {
             if (_poolHashes.TryGetValue (poolType, out var rawPool)) {
                 return (EcsPool<T>) rawPool;
             }
+            
+#if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
+                throw new Exception ($"Pool with type {poolType} already warmed.");
+#endif
+			return WarmupPool<T>();
+        }
+
+        public EcsPool<T> WarmupPool<T> () where T : struct {
+            var poolType = typeof (T);
+            if (_poolHashes.TryGetValue (poolType, out var rawPool)) {
+#if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
+                throw new Exception ($"Pool with type {poolType} already warmed.");
+#endif
+				return rawPool;
+            }
             var pool = new EcsPool<T> (this, _poolsCount, _poolDenseSize, Entities.Length, _poolRecycledSize);
             _poolHashes[poolType] = pool;
             if (_poolsCount == _pools.Length) {
@@ -243,7 +258,8 @@ namespace Submodules.EcsLite {
                 Array.Resize (ref _filtersByExcludedComponents, newSize);
             }
             _pools[_poolsCount++] = pool;
-            return pool;
+
+			return pool;
         }
 
         [MethodImpl (MethodImplOptions.AggressiveInlining)]
