@@ -21,10 +21,10 @@ namespace Submodules.EcsLite
 					continue;
 				}
 				
-				var getPoolMethodName = nameof(EcsWorld.GetPool);
-				var getPoolMethod = typeof(EcsWorld).GetMethod(getPoolMethodName);
-				var getPoolGenericMethod = getPoolMethod.MakeGenericMethod(ecsComponentType);
-				getPoolGenericMethod.Invoke(ecsWorld, null);
+				var warmupPoolName = nameof(EcsWorld.WarmupPool);
+				var warmupPoolMethod = typeof(EcsWorld).GetMethod(warmupPoolName);
+				var warmupPoolGenericMethod = warmupPoolMethod.MakeGenericMethod(ecsComponentType);
+				warmupPoolGenericMethod.Invoke(ecsWorld, null);
 			}
 		}
 		
