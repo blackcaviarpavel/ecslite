@@ -208,14 +208,13 @@ namespace Submodules.EcsLite {
         }
         
         [MethodImpl (MethodImplOptions.AggressiveInlining)]
-        public T TryRead (int entity, out T component) {
+        public bool TryRead (int entity, out T component) {
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
             if (entity == EcsWorld.NullEntityIndex) { throw new Exception ("Null reference entity."); }
             if (!_world.IsEntityAliveInternal (entity)) { throw new Exception ("Cant touch destroyed entity."); }
 #endif
-            if (_sparseItems[entity] > 0)
-            {
-                component = Read<T>(entity);
+            if (_sparseItems[entity] > 0) {
+                component = Read (entity);
                 return true;
             }
 
