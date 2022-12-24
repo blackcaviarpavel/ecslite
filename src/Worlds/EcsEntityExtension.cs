@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using System;
 
 namespace Submodules.EcsLite
 {
