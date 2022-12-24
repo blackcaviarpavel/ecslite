@@ -6,13 +6,20 @@ using UnityEngine;
 namespace Submodules.EcsLite
 {
 #if LEOECSLITE_FILTER_EVENTS
-	public abstract class ReactiveSystem : IEcsRunSystem, IEcsInitializeSystem, IEcsDestroySystem, IEcsFilterEventListener
+	public abstract class ReactiveSystem : IEcsPreInitSystem, IEcsRunSystem, IEcsInitializeSystem, IEcsDestroySystem, IEcsFilterEventListener
 	{
 		private readonly HashSet<EcsFilterMonitor> _listeningFilters = new(4);
 		private readonly HashSet<EcsPackedEntity> _triggeredEntities = new(10);
 		private readonly HashSet<int> _cachedEntities = new(10);
 		private MonitoringType _monitoringType = MonitoringType.Unknown;
 		private bool _isActive;
+
+		private EcsWorld _ecsWorld;
+
+		public void PreInit(IEcsSystems systems)
+		{
+			_ecsWorld = systems.GetWorld();
+		}
 
 		public void Initialize()
 		{
@@ -25,7 +32,7 @@ namespace Submodules.EcsLite
 		{
 			if (_monitoringType is MonitoringType.Updated or MonitoringType.UpdatedOrRemoved)
 			{
-				_triggeredEntities.Add(EcsWorld.PackEntity(entity));
+				_triggeredEntities.Add(_ecsWorld.PackEntity(entity));
 			}
 		}
 
@@ -33,7 +40,7 @@ namespace Submodules.EcsLite
 		{
 			if (_monitoringType is MonitoringType.Removed or MonitoringType.UpdatedOrRemoved)
 			{
-				_triggeredEntities.Add(EcsWorld.PackEntity(entity));
+				_triggeredEntities.Add(_ecsWorld.PackEntity(entity));
 			}
 		}
 
@@ -47,7 +54,7 @@ namespace Submodules.EcsLite
 			_cachedEntities.Clear();
 			foreach (var packedEntity in _triggeredEntities)
 			{
-				if (!packedEntity.Unpack(EcsWorld, out var unpackedEntity))
+				if (!packedEntity.Unpack(_ecsWorld, out var unpackedEntity))
 				{
 					continue;
 				}
