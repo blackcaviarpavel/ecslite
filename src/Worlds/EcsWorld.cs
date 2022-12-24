@@ -238,11 +238,11 @@ namespace Submodules.EcsLite {
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
                 throw new Exception ($"Pool with type {poolType} is not warmed.");
 #endif
-			return WarmupPoolInternal<T>();
+			return GetWarmedPoolInternal<T>();
         }
 
         public void WarmupPool<T> () where T : struct {
-            WarmupPoolInternal<T>();
+            GetWarmedPoolInternal<T>();
         }
 
         [MethodImpl (MethodImplOptions.AggressiveInlining)]
@@ -314,7 +314,7 @@ namespace Submodules.EcsLite {
             return itemsCount;
         }
 
-        internal EcsPool<T> WarmupPoolInternal<T> () where T : struct {
+        internal EcsPool<T> GetWarmedPoolInternal<T> () where T : struct {
             var poolType = typeof (T);
             if (_poolHashes.TryGetValue (poolType, out var rawPool)) {
                 return (EcsPool<T>) rawPool;

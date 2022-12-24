@@ -27,17 +27,17 @@ namespace Submodules.EcsLite.ExtendedSystems {
     [Il2CppSetOption (Option.ArrayBoundsChecks, false)]
 #endif
     public sealed class DelHereSystem<T> : IEcsRunSystem where T : struct {
+        readonly EcsWorld _world;
         readonly EcsFilter _filter;
-        readonly EcsPool<T> _pool;
 
         public DelHereSystem (EcsWorld world) {
+            _world = world;
             _filter = world.Filter<T> ().End ();
-            _pool = world.GetPool<T> ();
         }
 
         public void Run () {
             foreach (var entity in _filter) {
-                _pool.Remove(entity);
+                entity.Remove<T>(_world);
             }
         }
     }
@@ -49,12 +49,10 @@ namespace Submodules.EcsLite.ExtendedSystems {
     public class DestroyEntityHereSystem<T> : IEcsRunSystem where T : struct {
         readonly EcsWorld _world;
         readonly EcsFilter _filter;
-        readonly EcsPool<T> _pool;
 
         public DestroyEntityHereSystem (EcsWorld world) {
             _world = world;
             _filter = world.Filter<T> ().End ();
-            _pool = world.GetPool<T> ();
         }
 
         public void Run () {
@@ -117,7 +115,7 @@ namespace Submodules.EcsLite.ExtendedSystems {
 
         public void PreInit (IEcsSystems systems) {
             var world = _systems.GetWorld (_eventsWorldName);
-            _pool = world.GetPool<EcsGroupSystemState> ();
+            _pool = world.GetWarmedPoolInternal<EcsGroupSystemState> ();
             _filter = world.Filter<EcsGroupSystemState> ().End ();
             for (var i = 0; i < _nestedSystems.Length; i++) {
                 if (_nestedSystems[i] is IEcsPreInitSystem preInitSystem) {
