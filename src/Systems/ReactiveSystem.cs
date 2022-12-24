@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Submodules.EcsLite
 {
 #if LEOECSLITE_FILTER_EVENTS
-	public abstract class ReactiveSystem : IEcsPreInitSystem, IEcsRunSystem, IEcsInitializeSystem, IEcsDestroySystem, IEcsFilterEventListener
+	public abstract class ReactiveSystem : IEcsRunSystem, IEcsInitializeSystem, IEcsDestroySystem, IEcsFilterEventListener
 	{
 		private readonly HashSet<EcsFilterMonitor> _listeningFilters = new(4);
 		private readonly HashSet<EcsPackedEntity> _triggeredEntities = new(10);
