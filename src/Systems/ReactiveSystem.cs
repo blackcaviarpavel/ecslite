@@ -13,13 +13,6 @@ namespace Submodules.EcsLite
 		private readonly HashSet<int> _cachedEntities = new(10);
 		private MonitoringType _monitoringType = MonitoringType.Unknown;
 		private bool _isActive;
-		
-		protected EcsWorld EcsWorld { get; private set; }
-
-		public void PreInit(IEcsSystems systems)
-		{
-			EcsWorld = systems.GetWorld();
-		}
 
 		public void Initialize()
 		{
