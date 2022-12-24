@@ -187,7 +187,7 @@ namespace Submodules.EcsLite {
             return ref Get(entity);
         }
 
-        [MethodImpl (MethodImplOptions.AggressiveInlining)]
+        [Obsolete, MethodImpl (MethodImplOptions.AggressiveInlining)]
         public ref T Get (int entity) {
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
             if (entity == EcsWorld.NullEntityIndex) { throw new Exception ("Null reference entity."); }
@@ -195,6 +195,32 @@ namespace Submodules.EcsLite {
             if (_sparseItems[entity] == 0) { throw new Exception ($"Cant get \"{typeof (T).Name}\" component - not attached."); }
 #endif
             return ref _denseItems[_sparseItems[entity]];
+        }
+
+        [MethodImpl (MethodImplOptions.AggressiveInlining)]
+        public T Read (int entity) {
+#if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
+            if (entity == EcsWorld.NullEntityIndex) { throw new Exception ("Null reference entity."); }
+            if (!_world.IsEntityAliveInternal (entity)) { throw new Exception ("Cant touch destroyed entity."); }
+            if (_sparseItems[entity] == 0) { throw new Exception ($"Cant get \"{typeof (T).Name}\" component - not attached."); }
+#endif
+            return _denseItems[_sparseItems[entity]];
+        }
+        
+        [MethodImpl (MethodImplOptions.AggressiveInlining)]
+        public T TryRead (int entity, out T component) {
+#if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
+            if (entity == EcsWorld.NullEntityIndex) { throw new Exception ("Null reference entity."); }
+            if (!_world.IsEntityAliveInternal (entity)) { throw new Exception ("Cant touch destroyed entity."); }
+#endif
+            if (_sparseItems[entity] > 0)
+            {
+                component = Read<T>(entity);
+                return true;
+            }
+
+            component = default;
+            return false;
         }
 
         [MethodImpl (MethodImplOptions.AggressiveInlining)]
