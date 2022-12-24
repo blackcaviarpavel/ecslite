@@ -3,8 +3,8 @@
 	public enum MonitoringType
 	{
 		Unknown,
-		Added,
+		Updated,
 		Removed,
-		AddedOrRemoved
+		UpdatedOrRemoved
 	}
 }

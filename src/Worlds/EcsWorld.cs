@@ -238,28 +238,11 @@ namespace Submodules.EcsLite {
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
                 throw new Exception ($"Pool with type {poolType} already warmed.");
 #endif
-			return WarmupPool<T>();
+			return WarmupPoolInternal<T>();
         }
 
-        public EcsPool<T> WarmupPool<T> () where T : struct {
-            var poolType = typeof (T);
-            if (_poolHashes.TryGetValue (poolType, out var rawPool)) {
-#if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
-                throw new Exception ($"Pool with type {poolType} already warmed.");
-#endif
-                return (EcsPool<T>) rawPool;
-            }
-            var pool = new EcsPool<T> (this, _poolsCount, _poolDenseSize, Entities.Length, _poolRecycledSize);
-            _poolHashes[poolType] = pool;
-            if (_poolsCount == _pools.Length) {
-                var newSize = _poolsCount << 1;
-                Array.Resize (ref _pools, newSize);
-                Array.Resize (ref _filtersByIncludedComponents, newSize);
-                Array.Resize (ref _filtersByExcludedComponents, newSize);
-            }
-            _pools[_poolsCount++] = pool;
-
-			return pool;
+        public void WarmupPool<T> () where T : struct {
+            WarmupPoolInternal<T>();
         }
 
         [MethodImpl (MethodImplOptions.AggressiveInlining)]
@@ -329,6 +312,24 @@ namespace Submodules.EcsLite {
                 }
             }
             return itemsCount;
+        }
+
+        internal EcsPool<T> WarmupPoolInternal<T> () where T : struct {
+            var poolType = typeof (T);
+            if (_poolHashes.TryGetValue (poolType, out var rawPool)) {
+                return (EcsPool<T>) rawPool;
+            }
+            var pool = new EcsPool<T> (this, _poolsCount, _poolDenseSize, Entities.Length, _poolRecycledSize);
+            _poolHashes[poolType] = pool;
+            if (_poolsCount == _pools.Length) {
+                var newSize = _poolsCount << 1;
+                Array.Resize (ref _pools, newSize);
+                Array.Resize (ref _filtersByIncludedComponents, newSize);
+                Array.Resize (ref _filtersByExcludedComponents, newSize);
+            }
+            _pools[_poolsCount++] = pool;
+
+			return pool;
         }
 
         [MethodImpl (MethodImplOptions.AggressiveInlining)]

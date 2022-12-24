@@ -30,7 +30,7 @@ namespace Submodules.EcsLite
 		
 		public void OnEntityAdded(int entity)
 		{
-			if (_monitoringType is MonitoringType.Added or MonitoringType.AddedOrRemoved)
+			if (_monitoringType is MonitoringType.Updated or MonitoringType.UpdatedOrRemoved)
 			{
 				_triggeredEntities.Add(EcsWorld.PackEntity(entity));
 			}
@@ -38,7 +38,7 @@ namespace Submodules.EcsLite
 
 		public void OnEntityRemoved(int entity)
 		{
-			if (_monitoringType is MonitoringType.Removed or MonitoringType.AddedOrRemoved)
+			if (_monitoringType is MonitoringType.Removed or MonitoringType.UpdatedOrRemoved)
 			{
 				_triggeredEntities.Add(EcsWorld.PackEntity(entity));
 			}
@@ -59,7 +59,7 @@ namespace Submodules.EcsLite
 					continue;
 				}
 				
-				if (_monitoringType == MonitoringType.Added)
+				if (_monitoringType == MonitoringType.Updated)
 				{
 					foreach (var monitor in _listeningFilters)
 					{
@@ -117,7 +117,7 @@ namespace Submodules.EcsLite
 			}
 			else if (_monitoringType != filterMonitor.MonitoringType)
 			{
-				_monitoringType = MonitoringType.AddedOrRemoved;
+				_monitoringType = MonitoringType.UpdatedOrRemoved;
 			}
 		}
 		

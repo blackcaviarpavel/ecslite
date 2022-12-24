@@ -2,9 +2,9 @@
 {
 	public static class EcsFilterReactiveExtension
 	{
-		public static EcsFilterMonitor OnAdded(this EcsFilter filter)
+		public static EcsFilterMonitor OnUpdated(this EcsFilter filter)
 		{
-			return new EcsFilterMonitor(filter, MonitoringType.Added);
+			return new EcsFilterMonitor(filter, MonitoringType.Updated);
 		}
 		
 		public static EcsFilterMonitor OnRemoved(this EcsFilter filter)
@@ -12,9 +12,9 @@
 			return new EcsFilterMonitor(filter, MonitoringType.Removed);
 		}
 		
-		public static EcsFilterMonitor OnAddedOrRemoved(this EcsFilter filter)
+		public static EcsFilterMonitor OnUpdatedOrRemoved(this EcsFilter filter)
 		{
-			return new EcsFilterMonitor(filter, MonitoringType.AddedOrRemoved);
+			return new EcsFilterMonitor(filter, MonitoringType.UpdatedOrRemoved);
 		}
 	}
 }
