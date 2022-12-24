@@ -236,7 +236,7 @@ namespace Submodules.EcsLite {
             }
             
 #if DEBUG && !LEOECSLITE_NO_SANITIZE_CHECKS
-                throw new Exception ($"Pool with type {poolType} already warmed.");
+                throw new Exception ($"Pool with type {poolType} is not warmed.");
 #endif
 			return WarmupPoolInternal<T>();
         }
