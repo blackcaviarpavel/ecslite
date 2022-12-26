@@ -69,6 +69,7 @@ namespace Submodules.EcsLite {
 #endif
         void ReflectionSupportHack () {
             _world.WarmupPool<T> ();
+            _world.GetWarmedPoolInternal<T> ();
             _world.GetPool<T> ();
             _world.Filter<T> ().Exc<T> ().End ();
         }
