@@ -68,6 +68,7 @@ namespace Submodules.EcsLite {
         [UnityEngine.Scripting.Preserve]
 #endif
         void ReflectionSupportHack () {
+            _world.WarmupPool<T> ();
             _world.GetPool<T> ();
             _world.Filter<T> ().Exc<T> ().End ();
         }
